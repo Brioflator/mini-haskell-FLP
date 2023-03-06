@@ -9,7 +9,8 @@ import Text.ParserCombinators.Parsec.Token
 import Control.Applicative (some)
 
 miniHaskellDef :: LanguageDef st
-miniHaskellDef = undefined
+miniHaskellDef = haskellStyle{ reservedNames = ["let", "letrec", "in"]
+                             , reservedOpNames = ["\\", "->", "="]}
 
 miniHs :: TokenParser st
 miniHs = makeTokenParser miniHaskellDef
@@ -21,22 +22,34 @@ testParse p s
       Right a -> a
 
 var :: Parser Var
-var = undefined
+var = Var <$> identifier miniHs <|> (operator miniHs)
 -- >>> testParse var "b is a var"
 -- Var {getVar = "b"}
 
 varExp :: Parser ComplexExp
-varExp = undefined
+varExp = <$> var
 -- >>> testParse varExp "b is a var"
 -- CX (Var {getVar = "b"})
 
 lambdaExp :: Parser ComplexExp
-lambdaExp = undefined
+lambdaExp = do
+    reservedOp miniHs "\\"
+    v <- var
+    reservedOp miniHs "->"
+    e <- expr
+    return $ CLam v e
 -- >>> testParse lambdaExp "\\x -> x"
 -- CLam (Var {getVar = "x"}) (CX (Var {getVar = "x"}))
 
 letExp :: Parser ComplexExp
-letExp = undefined
+letExp = do 
+    reserved miniHs "let"
+    v <- var
+    reservedOp miniHs "="
+    e1 <- expr
+    reserved miniHs "in"
+    e2 <- expr
+    return $ Let v e1 e2
 -- >>> testParse letExp "let x := y in z"
 -- Let (Var {getVar = "x"}) (CX (Var {getVar = "y"})) (CX (Var {getVar = "z"}))
 

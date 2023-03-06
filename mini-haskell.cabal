@@ -25,7 +25,11 @@ source-repository head
 
 library
   exposed-modules:
+      Exp
       Lib
+      Parsing
+      Printing
+      REPLCommand
   other-modules:
       Paths_mini_haskell
   hs-source-dirs:

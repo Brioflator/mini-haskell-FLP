@@ -15,4 +15,3 @@ data ComplexExp                         --  ComplexExp ::= "(" ComplexExp ")"
   | LetRec Var ComplexExp ComplexExp    --          |   "letrec" Var ":=" ComplexExp "in"
   | List [ComplexExp]                   --          |   "[" {ComplexExp ","}* "]"
   deriving (Show)
-

@@ -81,13 +81,13 @@ substitute toReplace replacement = go where
 -- App (Lam (IndexedVar {ivName = "x", ivCount = 1}) (X (IndexedVar {ivName = "x", ivCount = 0}))) (X (IndexedVar {ivName = "z", ivCount = 0}))
 
 normalize :: Exp -> Exp
-normalize = undefined
--- normalize t = case t of 
---     X v -> X v
---     Lam v e -> Lam v (normalize e)
---     App e1 e2 -> case normalize e1 of
---         Lam v e -> normalize (substitute v (normalize e2) e)
---         e1' -> App e1' (normalize e2)
+--normalize = undefined
+normalize t = case t of 
+    X v -> X v
+    Lam v e -> Lam v (normalize e)
+    App e1 e2 -> case normalize e1 of
+        Lam v e -> normalize (substitute v (normalize e2) e)
+        e1' -> App e1' (normalize e2)
 
 -- >>> normalize (X (makeIndexedVar "x"))
 -- X (IndexedVar {ivName = "x", ivCount = 0})
